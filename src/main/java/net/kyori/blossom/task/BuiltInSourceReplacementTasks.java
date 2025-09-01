@@ -22,10 +22,9 @@
 package net.kyori.blossom.task;
 
 import net.kyori.blossom.Blossom;
+import org.gradle.api.file.SourceDirectorySet;
 import org.gradle.api.internal.plugins.DslObject;
-import org.gradle.api.tasks.GroovySourceSet;
-import org.gradle.api.tasks.ScalaSourceSet;
-import org.gradle.api.tasks.SourceSet;
+import org.gradle.api.tasks.*;
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet;
 
 /**
@@ -49,8 +48,8 @@ public interface BuiltInSourceReplacementTasks {
    * @param mainSourceSet source set
    */
   static void setupScala(final Blossom blossom, final SourceSet mainSourceSet) {
-    final ScalaSourceSet set = (ScalaSourceSet) new DslObject(mainSourceSet).getConvention().getPlugins().get("scala");
-    blossom.setupSourceReplacementTask("blossomSourceReplacementScala", set.getScala(), "sources/scala/", mainSourceSet.getCompileTaskName("scala"));
+    final SourceDirectorySet set = (SourceDirectorySet) mainSourceSet.getExtensions().getByName("scala");
+    blossom.setupSourceReplacementTask("blossomSourceReplacementScala", set, "sources/scala/", mainSourceSet.getCompileTaskName("scala"));
   }
 
   /**
@@ -60,8 +59,8 @@ public interface BuiltInSourceReplacementTasks {
    * @param mainSourceSet source set
    */
   static void setupGroovy(final Blossom blossom, final SourceSet mainSourceSet) {
-    final GroovySourceSet set = (GroovySourceSet) new DslObject(mainSourceSet).getConvention().getPlugins().get("groovy");
-    blossom.setupSourceReplacementTask("blossomSourceReplacementGroovy", set.getGroovy(), "sources/groovy/", mainSourceSet.getCompileTaskName("groovy"));
+    final SourceDirectorySet set = (SourceDirectorySet) mainSourceSet.getExtensions().getByName("groovy");
+    blossom.setupSourceReplacementTask("blossomSourceReplacementGroovy", set, "sources/groovy/", mainSourceSet.getCompileTaskName("groovy"));
   }
 
   /**
@@ -71,7 +70,7 @@ public interface BuiltInSourceReplacementTasks {
    * @param mainSourceSet source set
    */
   static void setupKotlin(final Blossom blossom, final SourceSet mainSourceSet) {
-    final KotlinSourceSet set = (KotlinSourceSet) new DslObject(mainSourceSet).getConvention().getPlugins().get("kotlin");
-    blossom.setupSourceReplacementTask("blossomSourceReplacementKotlin", set.getKotlin(), "sources/kotlin/", mainSourceSet.getCompileTaskName("kotlin"));
+    final SourceDirectorySet set = (SourceDirectorySet) mainSourceSet.getExtensions().getByName("kotlin");
+    blossom.setupSourceReplacementTask("blossomSourceReplacementKotlin", set, "sources/kotlin/", mainSourceSet.getCompileTaskName("kotlin"));
   }
 }

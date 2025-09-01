@@ -1,4 +1,5 @@
 plugins {
+  id("maven-publish")
   id("java-gradle-plugin")
   id("com.gradle.plugin-publish")
   id("net.kyori.indra")
@@ -7,8 +8,8 @@ plugins {
   id("net.kyori.indra.checkstyle")
 }
 
-group = "net.kyori"
-version = "1.3.2-SNAPSHOT"
+group = "com.crystaelix"
+version = "1.3.2"
 description = "Gradle plugin for performing source code token replacements in Java, Kotlin, Scala, and Groovy based projects"
 
 repositories {
@@ -29,7 +30,7 @@ indra {
     target(8)
     testWith(8, 11, 17)
   }
-  github("KyoriPowered", "blossom")
+  github("Crystaelix", "blossom")
 }
 
 license {
@@ -44,5 +45,17 @@ indraPluginPublishing {
     project.description,
     listOf("blossom", "replacement")
   )
-  website("https://github.com/KyoriPowered/blossom")
+  website("https://github.com/Crystaelix/blossom")
+}
+
+publishing {
+  repositories {
+    if (project.hasProperty("CrystaelixMavenUsername") && project.hasProperty("CrystaelixMavenPassword")) {
+      maven {
+        name = "CrystaelixMaven"
+        url = uri("https://maven.crystaelix.com/releases/")
+        credentials(PasswordCredentials::class)
+      }
+    }
+  }
 }
