@@ -37,11 +37,14 @@ import org.gradle.api.DefaultTask;
 import org.gradle.api.file.DirectoryTree;
 import org.gradle.api.file.FileTree;
 import org.gradle.api.file.SourceDirectorySet;
+import org.gradle.api.model.ObjectFactory;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.util.PatternSet;
+
+import javax.inject.Inject;
 
 /**
  * Task for replacing tokens in source code files.
@@ -52,6 +55,15 @@ public class SourceReplacementTask extends DefaultTask {
   private final Multimap<String, Map<String, Object>> tokenReplacementsByFile = HashMultimap.create();
   public /* should be private */ File output;
   private SourceDirectorySet input;
+
+  private final ObjectFactory objects;
+  private final File projectDir;
+
+  @Inject
+  public SourceReplacementTask(ObjectFactory objects) {
+    this.objects = objects;
+    this.projectDir = this.getProject().getProjectDir();
+  }
 
   /**
    * Perform the source replacement task.
@@ -88,7 +100,7 @@ public class SourceReplacementTask extends DefaultTask {
 
       // this could be written as .matching(source), but it doesn't actually work
       // because later on gradle casts it directly to PatternSet and crashes
-      final FileTree tree = this.getProject().fileTree(dir).matching(this.input.getFilter()).matching(patternSet);
+      final FileTree tree = this.objects.fileTree().from(dir).matching(this.input.getFilter()).matching(patternSet);
 
       for(final File file : tree) {
         final File destination = getDestination(file, dir, this.output);
@@ -134,7 +146,7 @@ public class SourceReplacementTask extends DefaultTask {
    * @return The file path
    */
   private String getFilePath(final File file) {
-    final String path = file.getPath().replace(this.getProject().getProjectDir().getPath(), "").replace('\\', '/');
+    final String path = file.getPath().replace(this.projectDir.getPath(), "").replace('\\', '/');
     if(path.charAt(0) == '/') {
       return path.substring(1);
     }
